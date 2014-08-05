@@ -1,0 +1,30 @@
+{
+    "name": "huge/repo",
+    "description" : "Application permettant de stocker des livrables via une API en REST.",
+    "license": "MIT",
+    "keywords": ["repository", "store", "rest", "livrable", "binary"],
+    "authors": [
+        {
+            "name": "Florent FREMONT",
+            "email": "ff.fremont.florent@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/ffremont/HugeRepo/issues"
+    },
+    "require": {
+        "php": ">=5.3.3",
+        "doctrine/cache" : "v1.3.0",
+        "huge/ioc": "v2.0.0",
+        "huge/rest" : "dev-master",
+        "psr/log": "1.0.0"
+    },
+    "require-dev" : {
+        "apache/log4php": "2.3.0",
+        "phpunit/phpunit": "4.1.4",
+        "guzzle/guzzle": "3.9.1"
+    },
+    "autoload": {
+        "psr-0": {"Huge\\Repo\\": "src/main/php/"}
+    }
+}
