@@ -2,30 +2,27 @@
 
 $loader = require(__DIR__ . '/../../../vendor/autoload.php');
 
+$resource = __DIR__.'/../resources';
+
 // LOGGER log4php
 $configurator = new \LoggerConfiguratorDefault();
-\Logger::configure($configurator->parse(__DIR__.'/../resources/log4php.xml'));
+\Logger::configure($configurator->parse($resource.'/log4php.xml'));
 
 \Huge\IoC\Container\SuperIoC::registerLoader(array($loader, 'loadClass'));
 
-$ioc = new \Huge\Rest\WebAppIoC('1.0');
-$ioc->setCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
+$ioc = new \Huge\Rest\WebAppIoC('huge-repo', '1.0');
 
-\Huge\Repo\BuildClass::init($ioc);
-$ioc->addDefinitions(array(
-    array(
-        'class' => 'Huge\Repo\Ressources\Livrable',
-        'factory' => \Huge\Repo\BuildClass::getInstance()
-    ),
-    array(
-        'class' => 'Huge\Rest\Interceptors\PerfInterceptor',
-        'factory' => \Huge\IoC\Factory\SimpleFactory::getInstance()
-    ),
-    array(
-        'class' => 'Huge\Repo\Log\Log4phpFactory',
-        'factory' => \Huge\IoC\Factory\SimpleFactory::getInstance()
-    )
+/*$memcache = new Memcache();
+$memcache->pconnect('127.0.0.1', 11211);
+$cache = new \Doctrine\Common\Cache\MemcacheCache();
+$cache->setMemcache($memcache);
+$ioc->setApiCacheImpl($cache);
+$ioc->setCacheImpl($cache);*/
+
+$ioc->addOtherContainers(array(
+    new \Huge\Repo\RepoIoC()
 ));
+
 $ioc->addFiltersMapping(array(
     'Huge\Rest\Interceptors\PerfInterceptor' => '.*'
 ));
