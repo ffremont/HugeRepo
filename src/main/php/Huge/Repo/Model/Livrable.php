@@ -36,6 +36,12 @@ class Livrable implements IValidator{
      * @var string
      */
     public $format;
+    
+    /**
+     *
+     * @var string
+     */
+    public $sha1;
         
     /**
      * Créé une instance Livrable à partir d'un tableau (venant de mongo)
@@ -50,6 +56,7 @@ class Livrable implements IValidator{
         $l->version = $data['version'];
         $l->classifier = $data['classifier'];
         $l->format = $data['format'];
+        $l->sha1 = $data['sha1'];
         
         return $l;
     }

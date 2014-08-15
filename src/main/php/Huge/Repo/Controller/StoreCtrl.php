@@ -11,12 +11,12 @@ use Huge\IoC\Annotations\Autowired;
  * @Component
  */
 class StoreCtrl {
-
     /**
      * Taille limite d'une page
      */
+
     const LIMIT_PAGE = 30;
-    
+
     /**
      * @Autowired("Huge\Repo\Db\MongoManager")
      * @var \Huge\Repo\Db\MongoManager 
@@ -52,7 +52,7 @@ class StoreCtrl {
 
         return $out;
     }
-    
+
     /**
      * 
      * @param string $vendor
@@ -60,33 +60,33 @@ class StoreCtrl {
      * @param string $version
      * @param string $classifier
      */
-    public function search($vendor, $project, $version, $classifier, $currentPage){
+    public function search($vendor, $project, $version, $classifier, $currentPage) {
         $store = new Store();
-        
+
         $query = array();
-        if($vendor !== null){
-            $query['vendorName'] = new \MongoRegex('/'.$vendor.'/i');
+        if ($vendor !== null) {
+            $query['vendorName'] = new \MongoRegex('/' . $vendor . '/i');
         }
-        if($project !== null){
-            $query['projectName'] = new \MongoRegex('/'.$project.'/i');
+        if ($project !== null) {
+            $query['projectName'] = new \MongoRegex('/' . $project . '/i');
         }
-        if($version !== null){
-            $query['version'] = new \MongoRegex('/'.$version.'/i');
+        if ($version !== null) {
+            $query['version'] = new \MongoRegex('/' . $version . '/i');
         }
-        if($classifier !== null){
-            $query['classifier'] = new \MongoRegex('/'.$classifier.'/i');
+        if ($classifier !== null) {
+            $query['classifier'] = new \MongoRegex('/' . $classifier . '/i');
         }
-        
+
         $store->totalRows = $this->mongo->getCollection(Livrable::COLLECTION)->count($query);
         $store->totalPage = ($store->totalRows / self::LIMIT_PAGE) > 1 ? ($store->totalRows / self::LIMIT_PAGE) + 1 : 1;
 
-        $data = $this->mongo->getCollection(Livrable::COLLECTION)->find($query)->skip( $currentPage === 1 ? 0 : $currentPage*self::LIMIT_PAGE)->limit(self::LIMIT_PAGE);
-        foreach($data as $row){
+        $data = $this->mongo->getCollection(Livrable::COLLECTION)->find($query)->skip($currentPage === 1 ? 0 : $currentPage * self::LIMIT_PAGE)->limit(self::LIMIT_PAGE);
+        foreach ($data as $row) {
             $store->data[] = Livrable::create($row);
-        }        
-                
+        }
+
         $store->currentPage = $currentPage;
-        
+
         return $store;
     }
 
@@ -97,13 +97,54 @@ class StoreCtrl {
      * @return string
      */
     public function creerLivrable(Livrable $livrable, $tmpFile) {
-        mkdir($this->buildPath($livrable, false), 0777, true);
+        @mkdir($this->buildPath($livrable, false), 0777, true);
         copy($tmpFile, $this->buildPath($livrable));
 
         $aLivrable = (array) $livrable;
         $this->mongo->getCollection(Livrable::COLLECTION)->insert($aLivrable);
-        
+
         return $aLivrable['_id'];
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @return boolean
+     */
+    public function supprimer($id) {
+        $livrableMongo = $this->mongo->getCollection(Livrable::COLLECTION)->findOne(array(
+            '_id' => new \MongoId($id)
+        ));
+        
+        if($livrableMongo === null){
+            throw new \Huge\Rest\Exceptions\WebApplicationException('Livrable introuvable', 404);
+        }
+        $livrableMongo = (object)$livrableMongo;
+
+        $store = rtrim($this->config->getConfig('store', 'repository'), '/') . '/';
+        $vendorDir = $store . $livrableMongo->vendorName;
+        $projectDir = $vendorDir . '/' . $livrableMongo->projectName;
+        $versionDir = $projectDir . '/' . $livrableMongo->version;
+        
+        if (unlink($this->buildPath($livrableMongo))) {
+            $this->mongo->getCollection(Livrable::COLLECTION)->remove(array( '_id' => new \MongoId($id)));
+            $files = scandir($versionDir);
+            if (count($files) === 2) {
+                rmdir($versionDir);
+            }
+            $files = scandir($projectDir);
+            if (count($files) === 2) {
+                rmdir($projectDir);
+            }
+            $files = scandir($vendorDir);
+            if (count($files) === 2) {
+                rmdir($vendorDir);
+            }
+            
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -115,7 +156,7 @@ class StoreCtrl {
         $livrable = $this->mongo->getCollection(Livrable::COLLECTION)->findOne(array(
             '_id' => new \MongoId($id)
         ));
-        
+
         if ($livrable === null) {
             return null;
         } else {
@@ -125,7 +166,7 @@ class StoreCtrl {
 
         return array(
             'stream' => fopen($this->buildPath($livrable, true), 'r'),
-            'filename' => $livrable->projectName.($livrable->classifier === null ? '' : '-'.$livrable->classifier).'-'.$livrable->version.'.'.$livrable->format
+            'filename' => $livrable->projectName . ($livrable->classifier === null ? '' : '-' . $livrable->classifier) . '-' . $livrable->version . '.' . $livrable->format
         );
     }
 

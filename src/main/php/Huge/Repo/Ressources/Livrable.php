@@ -16,7 +16,7 @@ use Huge\Rest\Http\HttpRequest;
 use Huge\Rest\Http\HttpResponse;
 use Huge\Rest\Http\HttpFiles;
 use Huge\Rest\Http\HttpFile;
-
+use Huge\Rest\Exceptions\WebApplicationException;
 use Huge\Repo\Model\Livrable as MLivrable;
 
 /** * 
@@ -24,6 +24,7 @@ use Huge\Repo\Model\Livrable as MLivrable;
  * @Resource
  * @Path("livrable")
  * 
+ * curl -i http://hugerepo.fr/livrable/ -F file=@/var/www/pays_out.json -F vendorName="Huge" -F projectName="Toto" -F version="1.0.0" -H "Accept: application/json"
  */
 class Livrable {
 
@@ -67,17 +68,18 @@ class Livrable {
      */
     public function create() {
         $entity = $this->request->getEntity();
+
         if ($entity instanceof HttpFiles) {
             $files = $entity->getFiles();
-            if(count($files) !== 1){
-                return HttpResponse::status(400);
+            if (count($files) !== 1) {
+                throw new WebApplicationException('Nombre de fichier != 1', 400);
             }
-            
+
             $file = new HttpFile(array_shift($files));
 
             $params = $this->request->getParams();
             $this->bodyReader->validate('Huge\Repo\Model\Livrable', $params);
-            
+
             $livrable = new MLivrable();
             $livrable->vendorName = $params['vendorName'];
             $livrable->projectName = $params['projectName'];
@@ -85,14 +87,33 @@ class Livrable {
             $livrable->classifier = isset($params['classifier']) ? $params['classifier'] : null;
             $livrable->format = strtolower($file->getExtension());
 
+            $sha1File = sha1_file($file->getTmpFile());
+            if (isset($params['sha1'])) {
+                if ($params['sha1'] != $sha1File) {
+                    throw new WebApplicationException('SHA1 invalide', 400);
+                }
+            }
+            $livrable->sha1 = $sha1File;
+
+            $livrableMongo = $this->ctrl->getMongo()->getCollection(MLivrable::COLLECTION)->findOne(array(
+                'vendorName' => $livrable->vendorName,
+                'projectName' => $livrable->projectName,
+                'version' => $livrable->version,
+                'classifier' => $livrable->classifier
+            ));
+            if ($livrableMongo !== null) {
+                throw new WebApplicationException('Livrable déjà présent', 409);
+            }
+
             $id = $this->ctrl->creerLivrable($livrable, $file->getTmpFile());
+            $livrable->id = $id;
             
-            return HttpResponse::ok()->status(201)->entity($livrable)->addHeader('Location', '/livrable/'.$id);
+            return HttpResponse::ok()->status(201)->entity($livrable)->addHeader('Location', '/livrable/' . $id);
         } else {
             HttpResponse::status(400);
         }
     }
-    
+
     /**
      * @Get
      * @Path("search")
@@ -103,12 +124,12 @@ class Livrable {
      * @param string $version
      * @param string $classifier
      */
-    public function search() {    
+    public function search() {
         $vendor = $this->request->getParam('vendorName');
         $project = $this->request->getParam('projectName');
         $version = $this->request->getParam('version');
         $classifier = $this->request->getParam('classifier');
-        
+
         return HttpResponse::ok()->entity($this->ctrl->search($vendor, $project, $version, $classifier, $this->request->getParam('page') === null ? 1 : $this->request->getParam('page')));
     }
 
@@ -122,13 +143,13 @@ class Livrable {
      * @param string $version
      * @param string $classifier
      */
-    public function get($id) {        
+    public function get($id) {
         $info = $this->ctrl->getLivrable($id);
-        
-        return HttpResponse::ok()->addHeader('Content-Disposition', 'attachment; filename="'.$info['filename'].'"')->entity($info['stream']);
+
+        return HttpResponse::ok()->addHeader('Content-Disposition', 'attachment; filename="' . $info['filename'] . '"')->entity($info['stream']);
     }
 
-     /**
+    /**
      * @Delete
      * @Path(":mAlpha")
      * 
@@ -138,9 +159,7 @@ class Livrable {
      * @param string $classifier
      */
     public function delete($id) {
-        
-        
-        return HttpResponse::ok();
+        return $this->ctrl->supprimer($id) ? HttpResponse::ok() : HttpResponse::status(500);
     }
 
     public function getRequest() {
