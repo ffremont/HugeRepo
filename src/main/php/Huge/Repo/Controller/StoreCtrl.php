@@ -14,7 +14,6 @@ class StoreCtrl {
     /**
      * Taille limite d'une page
      */
-
     const LIMIT_PAGE = 30;
 
     /**
@@ -44,7 +43,7 @@ class StoreCtrl {
     }
 
     private function buildPath($livrable, $full = true) {
-        $store = rtrim($this->config->getConfig('store', 'repository'), '/');
+        $store = rtrim($this->config->getConfig('store.repository'), '/');
         $out = $store . '/' . $livrable->vendorName . '/' . $livrable->projectName . '/' . $livrable->version;
         if ($full) {
             $out = $out . '/' . $livrable->projectName . '-' . ($livrable->classifier === null ? '' : $livrable->classifier . '-') . $livrable->version . '.' . $livrable->format;
@@ -97,7 +96,7 @@ class StoreCtrl {
      * @return string
      */
     public function creerLivrable(Livrable $livrable, $tmpFile) {
-        @mkdir($this->buildPath($livrable, false), 0777, true);
+        mkdir($this->buildPath($livrable, false), 0777, true);
         copy($tmpFile, $this->buildPath($livrable));
 
         $aLivrable = (array) $livrable;
@@ -121,7 +120,7 @@ class StoreCtrl {
         }
         $livrableMongo = (object)$livrableMongo;
 
-        $store = rtrim($this->config->getConfig('store', 'repository'), '/') . '/';
+        $store = rtrim($this->config->getConfig('store.repository'), '/') . '/';
         $vendorDir = $store . $livrableMongo->vendorName;
         $projectDir = $vendorDir . '/' . $livrableMongo->projectName;
         $versionDir = $projectDir . '/' . $livrableMongo->version;

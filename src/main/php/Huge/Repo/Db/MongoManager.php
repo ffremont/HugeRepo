@@ -22,8 +22,8 @@ class MongoManager {
     private $dbName;
     
     public function __construct(\Huge\Repo\ConfigIniHelper $config) {
-        $this->mongoClient = new \MongoClient($config->getConfig('mongo', 'server'));
-        $this->dbName = $config->getConfig('mongo', 'dbName');
+        $this->mongoClient = new \MongoClient($config->getConfig('mongo.server'));
+        $this->dbName = $config->getConfig('mongo.dbName');
     }
 
     /**

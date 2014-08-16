@@ -6,14 +6,14 @@ use Huge\IoC\Container\SuperIoC;
 
 class RepoIoC extends SuperIoC {
 
-    public function __construct() {
+    public function __construct($configs = array()) {
         parent::__construct(__CLASS__, '1.0');
         
         \Huge\Repo\BuildClass::init($this);
         $this->addDefinitions(array(
             array(
                 'class' => 'Huge\Repo\ConfigIniHelper',
-                'factory' => new \Huge\IoC\Factory\ConstructFactory(array(parse_ini_file(__DIR__ . '/../../../resources/config.ini', true)))
+                'factory' => new \Huge\IoC\Factory\ConstructFactory(array($configs))
             ),
             array( 'class' => 'Huge\Repo\Ressources\Livrable', 'factory' => \Huge\Repo\BuildClass::getInstance() ),
             array( 'class' => 'Huge\Repo\Controller\StoreCtrl', 'factory' => \Huge\Repo\BuildClass::getInstance() ),

@@ -25,12 +25,11 @@ class ConfigIniHelper {
     
      /**
      * 
-     * @param string $section
      * @param string $name
      * @return mixed
      */
-    public function getConfig($section, $name){
-        return isset($this->configs[$section]) && isset($this->configs[$section][$name]) ? $this->configs[$section][$name] : null;
+    public function getConfig($name){
+        return isset($this->configs[$name]) ? $this->configs[$name] : null;
     }
 
 }
