@@ -39,12 +39,33 @@ return array(
     'memcache.port' => 11211
 );
 ```
+## Ajouter un livrable
+ * Path : /livrable
+ * Méthode : POST
+ * Paramètres : attributs du livrable
+ * Accept : application/json
+ 
+## Télécharger un livrable
+ * Path : /livrable/{ID}
+ * Méthode : GET
 
+## Rechercher
+ * Path : /livrable/search
+ * Méthode : GET
+ * Paramètres en GET : vendorName, projectName, version, classifier
+ 
+## Supprimer
+ * Path : /livrable/{ID}
+ * Méthode : DELETE
+ 
 ## Limitations
  * Mongo pour le stockage
  * Interconnexion avec d'autres Huge\Repo non géré (pour l'instant)
 
 ## Envoyer automatiquement votre livrable
  * curl -i http://hugerepo.fr/livrable/ -F file=@/var/www/pays_out.json -F vendorName="Huge" -F projectName="Toto" -F version="1.0.0" -H "Accept: application/json"
+
+## Télécharger
+ * wget http://hugerepo.test.fr/livrable/53e998f75768bca60d9b4567
 
 
