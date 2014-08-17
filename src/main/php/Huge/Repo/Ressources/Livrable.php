@@ -9,7 +9,6 @@ use Huge\Rest\Annotations\Path;
 use Huge\Rest\Annotations\Produces;
 use Huge\Rest\Annotations\Get;
 use Huge\Rest\Annotations\Delete;
-use Huge\Rest\Annotations\Put;
 use Huge\Rest\Annotations\Post;
 use Huge\Rest\Annotations\Consumes;
 use Huge\Rest\Http\HttpRequest;
@@ -27,6 +26,8 @@ use Huge\Repo\Model\Livrable as MLivrable;
  * curl -i http://hugerepo.fr/livrable/ -F file=@/var/www/pays_out.json -F vendorName="Huge" -F projectName="Toto" -F version="1.0.0" -H "Accept: application/json"
  */
 class Livrable {
+    
+    const EXPIRES = 86400;    
 
     /**
      * @Autowired("Huge\Rest\Http\HttpRequest")
@@ -146,7 +147,7 @@ class Livrable {
     public function get($id) {
         $info = $this->ctrl->getLivrable($id);
 
-        return HttpResponse::ok()->addHeader('Content-Disposition', 'attachment; filename="' . $info['filename'] . '"')->entity($info['stream']);
+        return HttpResponse::ok()->expires(self::EXPIRES)->addHeader('Content-Disposition', 'attachment; filename="' . $info['filename'] . '"')->entity($info['stream']);
     }
 
     /**

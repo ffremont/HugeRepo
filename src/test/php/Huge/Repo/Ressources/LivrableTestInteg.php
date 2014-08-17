@@ -142,7 +142,60 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals(201, $status);
+    }
+    
+    /**
+     * @test
+     */
+    public function post_livrable_avecSha1_ok() {
+        $client = new GuzzleHttp\Client($GLOBALS['variables']['apache.integrationTest.baseUrl']);
+
+        $file = $GLOBALS['resourcesDir'].'/test.zip';
         
+        $status = null;
+        $response = null;
+        try {
+            $response = $client->post('/livrable', array(), array(
+                'myFile' => '@'.$file,
+                'vendorName' => 'Huge',
+                'projectName' => 'MonAppli',
+                'version' => '1.0.0',
+                'classifier' => 'dev',
+                'sha1' => sha1_file($file)
+            ))->setHeader('accept', 'application/json')->send();
+            $status = $response->getStatusCode();
+        } catch (GuzzleHttp\Exception\BadResponseException $e) {
+            $status = $e->getResponse()->getStatusCode();
+        }
+
+        $this->assertEquals(201, $status);
+    }
+    
+    /**
+     * @test
+     */
+    public function post_livrable_avecSha1_kp() {
+        $client = new GuzzleHttp\Client($GLOBALS['variables']['apache.integrationTest.baseUrl']);
+
+        $file = $GLOBALS['resourcesDir'].'/test.zip';
+        
+        $status = null;
+        $response = null;
+        try {
+            $response = $client->post('/livrable', array(), array(
+                'myFile' => '@'.$file,
+                'vendorName' => 'Huge',
+                'projectName' => 'MonAppli',
+                'version' => '1.0.0',
+                'classifier' => 'dev',
+                'sha1' => 'oo'
+            ))->setHeader('accept', 'application/json')->send();
+            $status = $response->getStatusCode();
+        } catch (GuzzleHttp\Exception\BadResponseException $e) {
+            $status = $e->getResponse()->getStatusCode();
+        }
+
+        $this->assertEquals(400, $status);
     }
     
     /**
