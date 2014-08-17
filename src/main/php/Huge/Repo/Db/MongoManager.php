@@ -35,6 +35,14 @@ class MongoManager {
     }
     
     /**
+     * 
+     * @return \MongoGridFS
+     */
+    public function getGridFS(){
+        return $this->mongoClient->selectDB($this->dbName)->getGridFS();
+    }
+    
+    /**
      * Retourne une collection
      * 
      * @param string $name

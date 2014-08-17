@@ -42,16 +42,6 @@ class StoreCtrl {
         $this->logger = $factoryLogger->getLogger(__CLASS__);
     }
 
-    private function buildPath($livrable, $full = true) {
-        $store = rtrim($this->config->getConfig('store.repository'), '/');
-        $out = $store . '/' . $livrable->vendorName . '/' . $livrable->projectName . '/' . $livrable->version;
-        if ($full) {
-            $out = $out . '/' . $livrable->projectName . '-' . ($livrable->classifier === null ? '' : $livrable->classifier . '-') . $livrable->version . '.' . $livrable->format;
-        }
-
-        return $out;
-    }
-
     /**
      * 
      * @param string $vendor
@@ -76,12 +66,12 @@ class StoreCtrl {
             $query['classifier'] = new \MongoRegex('/' . $classifier . '/i');
         }
 
-        $store->totalRows = $this->mongo->getCollection(Livrable::COLLECTION)->count($query);
+        $store->totalRows = $this->mongo->getGridFS()->count($query);
         $store->totalPage = ($store->totalRows / self::LIMIT_PAGE) > 1 ? ($store->totalRows / self::LIMIT_PAGE) + 1 : 1;
 
-        $data = $this->mongo->getCollection(Livrable::COLLECTION)->find($query)->skip($currentPage === 1 ? 0 : $currentPage * self::LIMIT_PAGE)->limit(self::LIMIT_PAGE);
+        $data = $this->mongo->getGridFS()->find($query)->skip($currentPage === 1 ? 0 : $currentPage * self::LIMIT_PAGE)->limit(self::LIMIT_PAGE);
         foreach ($data as $row) {
-            $store->data[] = Livrable::create($row);
+            $store->data[] = Livrable::create($row->file);
         }
 
         $store->currentPage = $currentPage;
@@ -93,16 +83,12 @@ class StoreCtrl {
      * 
      * @param \Huge\Repo\Model\Livrable $livrable
      * @param string $tmpFile
-     * @return string
+     * @return \MongoId
      */
     public function creerLivrable(Livrable $livrable, $tmpFile) {
-        mkdir($this->buildPath($livrable, false), 0777, true);
-        copy($tmpFile, $this->buildPath($livrable));
-
         $aLivrable = (array) $livrable;
-        $this->mongo->getCollection(Livrable::COLLECTION)->insert($aLivrable);
-
-        return $aLivrable['_id'];
+        
+        return $this->mongo->getGridFS()->storeFile($tmpFile, $aLivrable);
     }
 
     /**
@@ -111,39 +97,9 @@ class StoreCtrl {
      * @return boolean
      */
     public function supprimer($id) {
-        $livrableMongo = $this->mongo->getCollection(Livrable::COLLECTION)->findOne(array(
-            '_id' => new \MongoId($id)
-        ));
+        $result = $this->mongo->getGridFS()->remove(array('_id' => new \MongoId($id)));
         
-        if($livrableMongo === null){
-            throw new \Huge\Rest\Exceptions\WebApplicationException('Livrable introuvable', 404);
-        }
-        $livrableMongo = (object)$livrableMongo;
-
-        $store = rtrim($this->config->getConfig('store.repository'), '/') . '/';
-        $vendorDir = $store . $livrableMongo->vendorName;
-        $projectDir = $vendorDir . '/' . $livrableMongo->projectName;
-        $versionDir = $projectDir . '/' . $livrableMongo->version;
-        
-        if (unlink($this->buildPath($livrableMongo))) {
-            $this->mongo->getCollection(Livrable::COLLECTION)->remove(array( '_id' => new \MongoId($id)));
-            $files = scandir($versionDir);
-            if (count($files) === 2) {
-                rmdir($versionDir);
-            }
-            $files = scandir($projectDir);
-            if (count($files) === 2) {
-                rmdir($projectDir);
-            }
-            $files = scandir($vendorDir);
-            if (count($files) === 2) {
-                rmdir($vendorDir);
-            }
-            
-            return true;
-        } else {
-            return false;
-        }
+        return ($result === true) || (isset($result['ok']) && $result['ok']);
     }
 
     /**
@@ -152,20 +108,20 @@ class StoreCtrl {
      * @return array
      */
     public function getLivrable($id) {
-        $livrable = $this->mongo->getCollection(Livrable::COLLECTION)->findOne(array(
+        $livrable = $this->mongo->getGridFS()->findOne(array(
             '_id' => new \MongoId($id)
         ));
 
+        $data = null;
         if ($livrable === null) {
             return null;
         } else {
-            $livrable = (object) $livrable;
+            $data = Livrable::create($livrable->file);
         }
-        /* @var $livrable \Huge\Repo\Model\Livrable */
 
         return array(
-            'stream' => fopen($this->buildPath($livrable, true), 'r'),
-            'filename' => $livrable->projectName . ($livrable->classifier === null ? '' : '-' . $livrable->classifier) . '-' . $livrable->version . '.' . $livrable->format
+            'stream' => $livrable->getResource(),
+            'filename' => $data->projectName . ($data->classifier === null ? '' : '-' . $data->classifier) . '-' . $data->version . '.' . $data->format
         );
     }
 

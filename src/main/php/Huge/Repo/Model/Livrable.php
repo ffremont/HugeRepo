@@ -47,8 +47,9 @@ class Livrable implements IValidator{
      * Créé une instance Livrable à partir d'un tableau (venant de mongo)
      * 
      * @param array $data
+     * @return Livrable
      */
-    public static function create($data){
+    public static function create(array $data){
         $l = new Livrable();
         $l->id = ''.$data['_id'];
         $l->projectName = $data['projectName'];
@@ -59,6 +60,10 @@ class Livrable implements IValidator{
         $l->sha1 = $data['sha1'];
         
         return $l;
+    }
+    
+    public function getFileName(){
+        return $this->projectName . ($this->classifier === null ? '' : '-' . $this->classifier) . '-' . $this->version . '.' . $this->format;
     }
     
     

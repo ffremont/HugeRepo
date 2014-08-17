@@ -95,7 +95,7 @@ class Livrable {
             }
             $livrable->sha1 = $sha1File;
 
-            $livrableMongo = $this->ctrl->getMongo()->getCollection(MLivrable::COLLECTION)->findOne(array(
+            $livrableMongo = $this->ctrl->getMongo()->getGridFS()->findOne(array(
                 'vendorName' => $livrable->vendorName,
                 'projectName' => $livrable->projectName,
                 'version' => $livrable->version,
@@ -110,7 +110,7 @@ class Livrable {
             
             return HttpResponse::ok()->status(201)->entity($livrable)->addHeader('Location', '/livrable/' . $id);
         } else {
-            HttpResponse::status(400);
+             throw new WebApplicationException('Requête invalide', 400);
         }
     }
 

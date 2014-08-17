@@ -9,9 +9,16 @@ abstract class Fixture {
      * @var array
      */
     protected $collections;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $files;
 
     public function __construct() {
         $this->collections = array();
+        $this->files = array();
     }
     
     /**
@@ -25,6 +32,13 @@ abstract class Fixture {
             
             $collection->remove(array()); // purge
             $collection->batchInsert($models);
+        }
+        
+        if(!empty($this->files)){
+            $mongoDb->getGridFS()->remove(array());
+            foreach($this->files as $file){
+                $mongoDb->getGridFS()->storeFile($file['filename'], $file['meta']);
+            }
         }
     }
     
