@@ -29,6 +29,9 @@ Installer avec composer
   * sha1 (facultatif) : permet de réaliser une vérification côté serveur
 
 ## Configuration
+* VirtualHost sur src/main/webapp
+* Module rewrite obligatoire
+* src/main/resources/config.php
 ```php
 return array(
     'mongo.server' => 'mongodb://localhost:27018',
