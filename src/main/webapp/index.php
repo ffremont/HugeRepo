@@ -3,16 +3,15 @@
 $loader = require(__DIR__ . '/../../../vendor/autoload.php');
 
 $resource = __DIR__.'/../resources';
+$configs = require($resource.'/config.php');
 
 // LOGGER log4php
-$configurator = new \LoggerConfiguratorDefault();
-\Logger::configure($configurator->parse($resource.'/log4php.xml'));
+\Logger::configure($configs['log4phpConfig']);
 
 \Huge\IoC\Container\SuperIoC::registerLoader(array($loader, 'loadClass'));
 
-$ioc = new \Huge\Rest\WebAppIoC('huge-repo', '1.0');
+$ioc = new \Huge\Rest\WebAppIoC('huge-repo-'.$configs['instance.name'], '1.0');
 
-$configs = require(__DIR__ . '/../resources/config.php');
 $cache = new \Doctrine\Common\Cache\ArrayCache();
 if($configs['memcache.enable']){
     $memcache = new Memcache();

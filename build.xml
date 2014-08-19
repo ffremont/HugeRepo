@@ -39,6 +39,7 @@
             </fileset>
         </copy>
         
+        <mkdir dir="./target/${target.name.final}/log" />
         <exec command="composer --optimize-autoloader install " dir="./target/${target.name.final}"/>
     </target>    
     

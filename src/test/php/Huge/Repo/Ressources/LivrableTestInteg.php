@@ -48,6 +48,26 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('master', $response->getHeader('x-powered-by'));
         $this->assertEquals('application/octet-stream', $response->getHeader('Content-Type'));
     }
+    
+    /**
+     * @test
+     */
+    public function get_livrableByCriteriaWithoutClassifier_ok() {
+        $client = new GuzzleHttp\Client($GLOBALS['variables']['apache.integrationTest.baseUrl']);
+
+        $status = null;
+        $response = null;
+        try {
+            $response = $client->get('/livrable/Florent/MonAppli/1.3.0')->send();
+            $status = $response->getStatusCode();
+        } catch (GuzzleHttp\Exception\BadResponseException $e) {
+            $status = $e->getResponse()->getStatusCode();
+        }
+
+        $this->assertEquals(200, $status);
+        $this->assertEquals('master', $response->getHeader('x-powered-by'));
+        $this->assertEquals('application/octet-stream', $response->getHeader('Content-Type'));
+    }
 
     /**
      * @test
@@ -89,7 +109,7 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         
         $store = json_decode($response->getBody(true));
         $this->assertTrue(is_object($store));
-        $this->assertEquals(3, $store->totalRows);
+        $this->assertEquals(4, $store->totalRows);
         $this->assertEquals(1, $store->currentPage);
         $this->assertEquals(1, $store->totalPage);        
         $this->assertTrue(is_array($store->data));

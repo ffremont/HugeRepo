@@ -7,9 +7,9 @@ $loader->add('Huge\Repo\\', 'src/test/php/');
 
 $GLOBALS['resourcesDir'] = __DIR__ . '/../resources';
 $GLOBALS['variables'] = parse_ini_file($GLOBALS['resourcesDir'] . '/variables.ini');
+$configs = require($GLOBALS['resourcesDir'].'/config.php');
 
 // LOGGER
-$configurator = new \LoggerConfiguratorDefault();
-\Logger::configure($configurator->parse($GLOBALS['resourcesDir'] . '/log4php.xml'));
+\Logger::configure($configs['log4phpConfig']);
 
 

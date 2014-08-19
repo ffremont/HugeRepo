@@ -136,7 +136,7 @@ class Livrable {
 
     /**
      * @Get
-     * @Path(":mAlpha/:mAlpha/:mAlpha/:oString")
+     * @Path(":mAlpha/:mAlpha/:mAlpha/?:oString")
      * @Produces({"application/octet-stream"})
      * 
      * @param string $vendorName
@@ -144,8 +144,8 @@ class Livrable {
      * @param string $version
      * @param string $classifier
      */
-    public function getByCriteria($vendorName, $projectName, $version, $classifier = null){
-        $info = $this->ctrl->getLivrableByCriteria($vendorName, $projectName, $version, $classifier);
+    public function getByCriteria($vendorName, $projectName, $version, $classifier){
+        $info = $this->ctrl->getLivrableByCriteria($vendorName, $projectName, $version, empty($classifier) ? null : $classifier);
 
         if($info === null){
             return HttpResponse::status(404);

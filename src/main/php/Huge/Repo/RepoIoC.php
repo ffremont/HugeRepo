@@ -7,7 +7,7 @@ use Huge\IoC\Container\SuperIoC;
 class RepoIoC extends SuperIoC {
 
     public function __construct($configs = array()) {
-        parent::__construct(__CLASS__, '1.0');
+    parent::__construct(__CLASS__.$configs['instance.name'], '1.0');
         
         \Huge\Repo\BuildClass::init($this);
         $this->addDefinitions(array(
