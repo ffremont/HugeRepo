@@ -27,9 +27,15 @@ $ioc->addOtherContainers(array(
     new \Huge\Repo\RepoIoC($configs)
 ));
 
-$ioc->addFiltersMapping(array(
-    'Huge\Rest\Interceptors\PerfInterceptor' => '.*'
+$ioc->addResponseFiltersMapping(array(
+    'Huge\Repo\Filters\PoweredByFilter' => '.*'
 ));
+
+if($configs['debug']){
+    $ioc->addFiltersMapping(array(
+        'Huge\Rest\Interceptors\PerfInterceptor' => '.*'
+    ));
+}
 
 $ioc->run();
 ?>

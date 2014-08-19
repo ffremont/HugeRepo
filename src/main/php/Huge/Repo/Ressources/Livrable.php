@@ -130,10 +130,35 @@ class Livrable {
         $project = $this->request->getParam('projectName');
         $version = $this->request->getParam('version');
         $classifier = $this->request->getParam('classifier');
-
+        
         return HttpResponse::ok()->entity($this->ctrl->search($vendor, $project, $version, $classifier, $this->request->getParam('page') === null ? 1 : $this->request->getParam('page')));
     }
 
+    /**
+     * @Get
+     * @Path(":mAlpha/:mAlpha/:mAlpha/:oString")
+     * @Produces({"application/octet-stream"})
+     * 
+     * @param string $vendorName
+     * @param string $projectName
+     * @param string $version
+     * @param string $classifier
+     */
+    public function getByCriteria($vendorName, $projectName, $version, $classifier = null){
+        $info = $this->ctrl->getLivrableByCriteria($vendorName, $projectName, $version, $classifier);
+
+        if($info === null){
+            return HttpResponse::status(404);
+        }
+        
+        if(isset($info['redirect'])){
+            return HttpResponse::status(301)->addHeader('Location', $info['redirect']);
+        }else{
+            return HttpResponse::ok()->expires(self::EXPIRES)->addHeader('Content-Disposition', 'attachment; filename="' . $info['filename'] . '"')->entity($info['stream']);
+        }
+        
+    }
+    
     /**
      * @Get
      * @Path(":mAlpha")
@@ -147,7 +172,15 @@ class Livrable {
     public function get($id) {
         $info = $this->ctrl->getLivrable($id);
 
-        return HttpResponse::ok()->expires(self::EXPIRES)->addHeader('Content-Disposition', 'attachment; filename="' . $info['filename'] . '"')->entity($info['stream']);
+        if($info === null){
+            return HttpResponse::status(404);
+        }
+        
+        if(isset($info['redirect'])){
+            return HttpResponse::status(301)->addHeader('Location', $info['redirect']);
+        }else{
+            return HttpResponse::ok()->expires(self::EXPIRES)->addHeader('Content-Disposition', 'attachment; filename="' . $info['filename'] . '"')->entity($info['stream']);
+        }
     }
 
     /**

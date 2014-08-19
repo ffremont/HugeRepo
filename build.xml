@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hugeRepo" default="package">    
+    
+    <propertyprompt propertyName="version" defaultValue="1.0.0" promptText="Saisir la version" />
+    <property name="target.name" value="hugeRepo"/>
+    <property name="target.name.final" value="${target.name}_${version}" override="true"/>
+        
+    <!-- Nettoyage -->
+    <target name="clean">
+        <echo msg="Nettoyage..." />        
+        <exec command="rm -rf target" dir="./"/>      
+    </target>
+    
+    <!-- préparation du répertoire cible -->
+    <target name="prepare" depends="clean">
+        <mkdir dir="./target" />
+    </target>
+    
+     <!-- test -->
+    <target name="test" depends="prepare">
+        <exec command="phpunit -c src/test/resources/phpunit.xml --testsuite IT" dir="./" outputProperty="cmd_output"/>
+        <echo msg="Tests :  ${cmd_output}"/>
+    </target>
+    
+    <target name="package" depends="test">
+        <copy todir="./target/${target.name.final}" >
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+            <fileset dir=".">
+                <include name="**/**" />
+                <exclude name="src/test/" /> <!-- tests -->
+                <exclude name="README.md" />
+                <exclude name="vendor/"/>
+                <exclude name="nbproject/" />
+                <exclude name="target/" />
+                <exclude name="build.xml" />
+                <exclude name="composer.lock" />
+            </fileset>
+        </copy>
+        
+        <exec command="composer --optimize-autoloader install " dir="./target/${target.name.final}"/>
+    </target>    
+    
+    <!-- place le livrable ZIP -->
+    <target name="publish" depends="package">
+        <echo msg="Compression en cours de ./target/${target.name}/ ..." />
+        
+        <exec command="7zr a ../${target.name.final}.7z *" dir="./target/${target.name.final}"/>
+        
+        <echo msg="Compression terminée." />
+    </target>
+    
+    <!-- créé le tag -->
+    <!--target name="deploy" depends="publish">
+        <echo msg="Déploiement en cours..." />
+        <svncopy
+            nocache="true"
+            repositoryurl="${svn.repository}/trunk/"
+            todir="${svn.repository}/tags/${version}"
+            message="Tag release ${version}" />
+    </target-->
+</project>

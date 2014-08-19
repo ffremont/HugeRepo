@@ -28,6 +28,26 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         $livrableF = new \Huge\Repo\Ressources\LivrableFixture();
         $livrableF->apply(self::$MONGO->selectDB($GLOBALS['variables']['mongo.dbName']));
     }
+    
+    /**
+     * @test
+     */
+    public function get_livrableByCriteria_ok() {
+        $client = new GuzzleHttp\Client($GLOBALS['variables']['apache.integrationTest.baseUrl']);
+
+        $status = null;
+        $response = null;
+        try {
+            $response = $client->get('/livrable/Florent/MonAppli/1.2.0/dev')->send();
+            $status = $response->getStatusCode();
+        } catch (GuzzleHttp\Exception\BadResponseException $e) {
+            $status = $e->getResponse()->getStatusCode();
+        }
+
+        $this->assertEquals(200, $status);
+        $this->assertEquals('master', $response->getHeader('x-powered-by'));
+        $this->assertEquals('application/octet-stream', $response->getHeader('Content-Type'));
+    }
 
     /**
      * @test
@@ -45,6 +65,7 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals(200, $status);
+        $this->assertEquals('master', $response->getHeader('x-powered-by'));
         $this->assertEquals('application/octet-stream', $response->getHeader('Content-Type'));
     }
 

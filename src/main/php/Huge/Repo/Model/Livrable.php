@@ -12,6 +12,12 @@ class Livrable implements IValidator{
     
     /**
      *
+     * @var \MongoDate
+     */
+    public $created;
+    
+    /**
+     *
      * @var string
      */
     public $vendorName;
@@ -43,6 +49,10 @@ class Livrable implements IValidator{
      */
     public $sha1;
         
+    public function __construct() {
+        $this->created = new \MongoDate();
+    }
+    
     /**
      * Créé une instance Livrable à partir d'un tableau (venant de mongo)
      * 
@@ -58,6 +68,7 @@ class Livrable implements IValidator{
         $l->classifier = $data['classifier'];
         $l->format = $data['format'];
         $l->sha1 = $data['sha1'];
+        $l->created = $data['created'];
         
         return $l;
     }

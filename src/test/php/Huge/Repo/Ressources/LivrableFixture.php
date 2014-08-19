@@ -19,6 +19,7 @@ class LivrableFixture extends \Huge\Repo\Fixture {
                     'version' => '1.2.0',
                     'classifier' => 'dev',
                     'format' => 'zip',
+                    'created' => new \MongoDate(),
                     'sha1' => 'a6387f979e9d17a1de3bd3efde69dfb461bf9888'
                 )
             ), array(
@@ -30,6 +31,7 @@ class LivrableFixture extends \Huge\Repo\Fixture {
                     'version' => '1.2.0',
                     'classifier' => 'prod',
                     'format' => 'zip',
+                    'created' => new \MongoDate(),
                     'sha1' => 'a6387f979e9d17a1de3bd3efde69dfb461bf9888'
                 )
             ), array(
@@ -41,6 +43,7 @@ class LivrableFixture extends \Huge\Repo\Fixture {
                     'version' => '1.2.1',
                     'classifier' => 'prod',
                     'format' => 'zip',
+                    'created' => new \MongoDate(),
                     'sha1' => 'a6387f979e9d17a1de3bd3efde69dfb461bf9888'
                 )
             )

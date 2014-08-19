@@ -20,7 +20,9 @@ class RepoIoC extends SuperIoC {
             array( 'class' => 'Huge\Repo\Db\MongoManager', 'factory' => new \Huge\IoC\Factory\ConstructFactory(array(new \Huge\IoC\RefBean('Huge\Repo\ConfigIniHelper', $this)))),
             
             array( 'class' => 'Huge\Rest\Interceptors\PerfInterceptor', 'factory' => \Huge\IoC\Factory\SimpleFactory::getInstance() ),
-            array('class' => 'Huge\Repo\Log\Log4phpFactory', 'factory' => \Huge\IoC\Factory\SimpleFactory::getInstance() )
+            array('class' => 'Huge\Repo\Log\Log4phpFactory', 'factory' => \Huge\IoC\Factory\SimpleFactory::getInstance() ),
+            
+            array( 'class' => 'Huge\Repo\Filters\PoweredByFilter', 'factory' => \Huge\IoC\Factory\SimpleFactory::getInstance() ),
         ));
     }
 

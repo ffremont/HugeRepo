@@ -7,6 +7,8 @@ use Huge\Repo\Model\Store;
 use Huge\IoC\Annotations\Component;
 use Huge\IoC\Annotations\Autowired;
 
+use Guzzle\Http as GuzzleHttp;
+
 /**
  * @Component
  */
@@ -78,6 +80,56 @@ class StoreCtrl {
 
         return $store;
     }
+    
+    /**
+     * 
+     * @param array $query critères Mongo
+     * @return array
+     */
+    public function get($query, $uri){
+        $livrable = $this->mongo->getGridFS()->findOne($query);
+        
+        if ($livrable === null) {
+            foreach($this->config->getConfig('slaves') as $slaveUrl){
+                $slaveUrl = trim($slaveUrl, '/');
+                $client = new GuzzleHttp\Client($slaveUrl);
+                $status = 500;
+                try{
+                    $response = $client->head($uri)->send();
+                    $status = $response->getStatusCode();
+                }catch(Exception $e){}                
+                
+                if($status === 200){
+                    return array('redirect' => $slaveUrl.$uri);
+                }
+            }
+            return null;
+        } else {
+            $data = Livrable::create($livrable->file);
+        }
+        
+        return array(
+            'stream' => $livrable->getResource(),
+            'filename' => $data->projectName . ($data->classifier === null ? '' : '-' . $data->classifier) . '-' . $data->version . '.' . $data->format
+        );
+    }
+    
+    /**
+     * 
+     * @param string $vendorName
+     * @param string $projectName
+     * @param string $version
+     * @param string $classifier
+     * @return \Huge\Repo\Model\Livrable
+     */
+    public function getLivrableByCriteria($vendorName, $projectName, $version, $classifier){
+        return $this->get(array(
+            'vendorName' => $vendorName,
+            'projectName' => $projectName,
+            'version' => $version,
+            'classifier' => $classifier
+        ), "/livrable/$vendorName/$projectName/$version/$classifier");
+    }
 
     /**
      * 
@@ -103,26 +155,15 @@ class StoreCtrl {
     }
 
     /**
+     * Recherche le livrable dans l'instance courante, sinon dans les slaves
      * 
      * @param string $id
      * @return array
      */
     public function getLivrable($id) {
-        $livrable = $this->mongo->getGridFS()->findOne(array(
+        return $this->get(array(
             '_id' => new \MongoId($id)
-        ));
-
-        $data = null;
-        if ($livrable === null) {
-            return null;
-        } else {
-            $data = Livrable::create($livrable->file);
-        }
-
-        return array(
-            'stream' => $livrable->getResource(),
-            'filename' => $data->projectName . ($data->classifier === null ? '' : '-' . $data->classifier) . '-' . $data->version . '.' . $data->format
-        );
+        ), "/livrable/$id");
     }
 
     public function getMongo() {
