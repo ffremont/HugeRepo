@@ -1,7 +1,14 @@
 HugeRepo
 ========
 
-Application permettant de stocker des livrables via une API en REST.
+Application permettant de stocker des livrables via une API en REST. 
+Vous pouvez organiser votre stockage en fonction de votre organisation, par exemple :
+ * multi-instances
+    * dev. mobile (slave): instance Huge/Repo avec sa base Mongo
+    * dev. desktop (slave): instance Huge/Repo avec sa base Mongo
+    * master : instance Huge/Repo avec sa base Mongo et pointe vers les 2 slaves
+ * une instance
+    * master : instance Huge/Repo avec sa base Mongo
 
 
 ##Installation
