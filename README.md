@@ -50,7 +50,7 @@ return array(
     'memcache.enable' => true,
     'memcache.host' => '127.0.0.1',
     'memcache.port' => 11211,
-    // liste des claves
+    // liste des slaves
     'slaves' => array(
     /* 'http://slave1.fr' */
     ),
