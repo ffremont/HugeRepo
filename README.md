@@ -31,35 +31,83 @@ Installer avec composer
 ## Configuration
 * VirtualHost sur src/main/webapp
 * Module rewrite obligatoire
+* Répertoire log en écriture pour www-data
 * src/main/resources/config.php
 ```php
 return array(
+    // nom de l'instance master, slave1, slave2 ...
+    'instance.name' => 'master',
     'mongo.server' => 'mongodb://localhost:27018',
     'mongo.dbName' => 'hugeRepo',
-    
+    'debug' => false,
     'memcache.enable' => true,
     'memcache.host' => '127.0.0.1',
-    'memcache.port' => 11211
+    'memcache.port' => 11211,
+    // liste des claves
+    'slaves' => array(
+    /* 'http://slave1.fr' */
+    ),
+    
+    'log4phpConfig' => array(
+        'rootLogger' => array(
+            'level' => 'WARN',
+            'appenders' => array('default'),
+        ),
+        'appenders' => array(
+            'default' => array(
+                'class' => 'LoggerAppenderFile',
+                'layout' => array(
+                    'class' => 'LoggerLayoutPattern',
+                    'params' => array(
+                        'conversionPattern' => '%date{Y-m-d H:i} - %logger %-5level : %msg%n%ex'
+                    )
+                ),
+                'params' => array(
+                    'file' => __DIR__.'/../../../log/repo.log',
+                    'append' => true
+                )
+            )
+        )
+    )
 );
 ```
+
+## Ordonner votre stockage
+ * Possibilité d'installer plusieurs dépôts de livrables
+    * master 
+        * Redispatch la récupération des livrables (GET du livrable)
+    * slaves
+ * Chaque instance est autonome (sa base mongo)
+ * La seule différence entre master/slave, c'est que le dépôt "master" permet de récupérer un livrable sur un slave
+ * Pour connaître l'instance utilisée : X-Powered-By: NOM_INSTANCE
+ * Votre gestionnaire de déploiement se base UNIQUEMENT sur le master
+
 ## Ajouter un livrable
  * Path : /livrable
  * Méthode : POST
  * Paramètres : attributs du livrable
  * Accept : application/json
+ * Description
+    * Ajout d'un livrable sur l'instance
  
 ## Télécharger un livrable
- * Path : /livrable/{ID}
+ * Path : /livrable/{ID} ou /livrable/{vendorName}/{projectName}/{version}/{classifier}
  * Méthode : GET
+ * Description
+    * Télécharge un livrable depuis l'instance courante ou depuis une autre instance
 
 ## Rechercher
  * Path : /livrable/search
  * Méthode : GET
  * Paramètres en GET : vendorName, projectName, version, classifier
+ * Description
+    * Recherche * livrables sur l'instance courante
  
 ## Supprimer
  * Path : /livrable/{ID}
  * Méthode : DELETE
+ * Description
+    * Supprime un livrable sur l'instance courante
  
 ## Limitations
  * Mongo pour le stockage
