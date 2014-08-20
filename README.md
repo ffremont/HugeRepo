@@ -115,10 +115,13 @@ return array(
  * Méthode : DELETE
  * Description
     * Supprime un livrable sur l'instance courante
- 
+
+## Authentification
+ * Délégué à apache2
+
 ## Limitations
  * Mongo pour le stockage
- * Interconnexion avec d'autres Huge\Repo non géré (pour l'instant)
+ * Non prise en charge de l'authentification
 
 ## Envoyer automatiquement votre livrable
  * curl -i http://hugerepo.fr/livrable/ -F file=@/var/www/pays_out.json -F vendorName="Huge" -F projectName="Toto" -F version="1.0.0" -H "Accept: application/json"
