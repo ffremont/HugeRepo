@@ -1,6 +1,8 @@
 HugeRepo
 ========
 
+Télécharger v1.0.0 : https://hubic.com/home/pub/?ruid=aHR0cHM6Ly9sYjEwNDAucGNzLm92aC5uZXQvdjEvQVVUSF85ZmQ3YTIxNDk1OTEwOGI2NjNiNDY4OGJkOWQzNzdhMS9kZWZhdWx0Ly5vdmhQdWIvMTQwODYyMTkzOF8xNDA5NDg1OTM4P3RlbXBfdXJsX3NpZz1mZmU2ODYzODQ2NWRkMDQxNDM3MTNiMjM1MWY1Y2FmNTc4NGE2MzI0JnRlbXBfdXJsX2V4cGlyZXM9MTQwOTQ4NTkzOA==
+
 Application permettant de stocker des livrables via une API en REST. 
 Vous pouvez organiser votre stockage en fonction de votre organisation, par exemple :
  * multi-instances
