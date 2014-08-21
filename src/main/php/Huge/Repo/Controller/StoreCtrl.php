@@ -84,6 +84,7 @@ class StoreCtrl {
     /**
      * 
      * @param array $query critères Mongo
+     * @param string $uri
      * @return array
      */
     public function get($query, $uri){

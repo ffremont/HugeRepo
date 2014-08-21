@@ -23,10 +23,14 @@ use Huge\Repo\Model\Livrable as MLivrable;
  * @Resource
  * @Path("livrable")
  * 
- * curl -i http://hugerepo.fr/livrable/ -F file=@/var/www/pays_out.json -F vendorName="Huge" -F projectName="Toto" -F version="1.0.0" -H "Accept: application/json"
  */
 class Livrable {
     
+    /**
+     * Temps en seconde pour mettre en cache les réponses HTTP
+     * 
+     * @var int
+     */
     const EXPIRES = 86400;    
 
     /**
@@ -63,6 +67,9 @@ class Livrable {
     }
 
     /**
+     * Pour envoyer un livrable
+     * curl -i http://hugerepo.fr/livrable/ -F file=@/var/www/pays_out.json -F vendorName="Huge" -F projectName="Toto" -F version="1.0.0" -H "Accept: application/json"
+     * 
      * @Post
      * @Consumes({"multipart/form-data"})
      * @Produces({"application/json"})
