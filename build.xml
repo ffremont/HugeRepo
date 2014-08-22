@@ -10,6 +10,7 @@
     
     <property name="target.name.final.dev" value="${target.name.final}-dev" />
     <property name="target.name.final.prod" value="${target.name.final}-prod" />
+    
         
     <!-- Copie des fichiers-->
     <target name="copy-files-dev">
@@ -53,10 +54,10 @@
     <!-- Nettoyage -->
     <target name="clean">
         <exec command="rm -rf target" dir="./"/>      
-        <mkdir dir="./${target.dir}" />
     </target>
     
-    <target name="prepare" depends="clean">
+    <target name="prepare">
+        <mkdir dir="./${target.dir}" />
         <if>
             <equals arg1="${dev.mode}" arg2="Y" />
             <then>
