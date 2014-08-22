@@ -7,10 +7,10 @@
     convertWarningsToExceptions="true"
     stopOnFailure="true"
 >
-    <testsuite name="TU">
-        <directory suffix="Test.php" phpVersion="5.3.3" phpVersionOperator=">=">../php/</directory>
-    </testsuite>
-    <testsuite name="IT">
-        <directory suffix="TestInteg.php" phpVersion="5.3.3" phpVersionOperator=">=">../php/</directory>
-    </testsuite>
+    <testsuites>
+        <testsuite>
+            <directory suffix="Test.php" phpVersion="5.3.3" phpVersionOperator=">=">../php/</directory>
+            <directory suffix="TestInteg.php" phpVersion="5.3.3" phpVersionOperator=">=">../php/</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

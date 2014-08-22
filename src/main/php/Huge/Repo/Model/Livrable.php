@@ -90,7 +90,7 @@ class Livrable implements IValidator{
             ),
             'version' => array(
                 'required', 
-                'regex' => '#^[0-9]\.[0-9]\.[0-9]$#'
+                'regex' => '#^[0-9]\.[0-9]\.[0-9](\-[a-zA-Z0-9]+)?$#'
             )
         );
     }
