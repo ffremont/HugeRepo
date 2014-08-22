@@ -100,7 +100,7 @@
     </target>
     
     <!-- créé le tag -->
-    <!--target name="deploy" depends="publish">
+    <!--target name="deploy" depends="build">
         <echo msg="Déploiement en cours..." />
         <svncopy
             nocache="true"

@@ -1,6 +1,7 @@
 <?php
 
 return array(
+    'version' => '${version}',
     // nom de l'instance master, slave1, slave2 ...
     'instance.name' => 'master',
     'mongo.server' => 'mongodb://localhost:27018',
