@@ -4,11 +4,20 @@
     <propertyprompt propertyName="dev.mode" defaultValue="Y" promptText="Dev mode Y/N " useExistingValue="true" />
     <propertyprompt propertyName="version" defaultValue="1.0.0" promptText="Saisir la version" useExistingValue="true" />
     
+    <property name="svn.repository" value="https://github.com/ffremont/HugeRepo"/>
+    <property name="repo.url" value="http://repo-master.fr/livrable"/>
+    
+    <property name="vendor" value="ffremont"/>
+    <property name="project" value="hugeRepo"/>
+    
+    <property name="skip.test" value="true"/>
     <property name="target.name" value="hugeRepo"/>
     <property name="target.dir" value="./target"/>
     <property name="target.name.final" value="${target.name}"/>
     
     <property name="target.name.final.dev" value="${target.name.final}-dev" />
+    <property name="filename.dev" value="${target.name.final}-${version}-dev" />
+    <property name="filename.prod" value="${target.name.final}-${version}-prod" />
     <property name="target.name.final.prod" value="${target.name.final}-prod" />
     
         
@@ -79,9 +88,17 @@
     
     <!-- test -->
     <target name="test" depends="prepare">
-        <exec command="phpunit -c src/test/resources/phpunit.xml" dir="./${target.dir}/${target.name.final.dev}" outputProperty="phpunit.out" returnProperty="phpunit.return" checkreturn="true"/>
-        <echo>${phpunit.return}</echo>
-        <echo>${phpunit.out}</echo>
+        <if>
+            <equals arg1="${skip.test}" arg2="true" />
+            <then>
+                <echo>Skip tests</echo>
+            </then>
+            <else>
+                <exec command="phpunit -c src/test/resources/phpunit.xml" dir="./${target.dir}/${target.name.final.dev}" outputProperty="phpunit.out" returnProperty="phpunit.return" checkreturn="true"/>
+                <echo>${phpunit.return}</echo>
+                <echo>${phpunit.out}</echo>
+            </else>
+        </if>
     </target>
     
     <target name="build" depends="test">
@@ -92,20 +109,60 @@
             </then>
             <else>
                 <parallel threadCount="2">
-                    <exec command="7zr a ../${target.name.final}-${version}-dev.7z *" dir="./${target.dir}/${target.name.final.dev}"/>
-                    <exec command="7zr a ../${target.name.final}-${version}-prod.7z *" dir="./${target.dir}/${target.name.final.prod}"/>
+                    <exec command="7zr a ../${filename.dev}.7z *" dir="./${target.dir}/${target.name.final.dev}"/>
+                    <exec command="7zr a ../${filename.prod}.7z *" dir="./${target.dir}/${target.name.final.prod}"/>
                 </parallel>
             </else>
         </if>
     </target>
     
+    <target name="curl.repo" >
+        <exec checkreturn="true" outputProperty="repo.out" command="curl -i ${repo.url} -F file=@${filename}.7z -F vendorName='${vendor}' -F projectName='${project}' -F version='${version}' -F classifier='${classifier}' -F sha1='${sha1}' -H 'Accept: application/json'" dir="./${target.dir}"/>
+        <if>
+            <contains string="${repo.out}" substring="201 Created"/>
+            <then></then>
+            <else>
+                <fail message="Failded Curl" />
+            </else>
+        </if>
+    </target>
+    
+    
     <!-- créé le tag -->
-    <!--target name="deploy" depends="build">
-        <echo msg="Déploiement en cours..." />
-        <svncopy
-            nocache="true"
-            repositoryurl="${svn.repository}/trunk/"
-            todir="${svn.repository}/tags/${version}"
-            message="Tag release ${version}" />
-    </target-->
+    <target name="deploy" depends="build">
+        <!--svncopy
+        nocache="true"
+        repositoryurl="${svn.repository}/trunk/"
+        todir="${svn.repository}/tags/${version}"
+        message="Tag release ${version}" /-->
+        <echo>${builddir}</echo>
+        
+        <filehash hashtype="1" file="${target.dir}/${filename.dev}.7z" propertyname="sha1.dev" />
+        
+        <if>
+            <equals arg1="${dev.mode}" arg2="Y" />
+            <then>
+                <phingcall target="curl.repo">
+                    <property name="filename" value="${filename.dev}"/>
+                    <property name="classifier" value="dev"/>
+                    <property name="sha1" value="${sha1.dev}"/>
+                </phingcall>
+            </then>
+            <else>
+                <filehash hashtype="1" file="${target.dir}/${filename.prod}.7z" propertyname="sha1.prod" />
+                <parallel threadCount="2">
+                    <phingcall target="curl.repo">
+                        <property name="filename" value="${filename.dev}"/>
+                        <property name="classifier" value="dev"/>
+                        <property name="sha1" value="${sha1.dev}"/>
+                    </phingcall>
+                    <phingcall target="curl.repo">
+                        <property name="filename" value="${filename.prod}"/>
+                        <property name="classifier" value="prod"/>
+                        <property name="sha1" value="${sha1.prod}"/>
+                    </phingcall>
+                </parallel>
+            </else>
+        </if>
+    </target>
 </project>

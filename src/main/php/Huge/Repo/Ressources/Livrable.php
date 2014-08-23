@@ -25,13 +25,13 @@ use Huge\Repo\Model\Livrable as MLivrable;
  * 
  */
 class Livrable {
-    
     /**
      * Temps en seconde pour mettre en cache les réponses HTTP
      * 
      * @var int
      */
-    const EXPIRES = 86400;    
+
+    const EXPIRES = 86400;
 
     /**
      * @Autowired("Huge\Rest\Http\HttpRequest")
@@ -93,7 +93,7 @@ class Livrable {
             $livrable->projectName = $params['projectName'];
             $livrable->version = $params['version'];
             $livrable->classifier = isset($params['classifier']) ? $params['classifier'] : null;
-            $livrable->format = strtolower($file->getExtension());
+            $livrable->format = $file->getExtension();
 
             $sha1File = sha1_file($file->getTmpFile());
             if (isset($params['sha1'])) {
@@ -109,16 +109,25 @@ class Livrable {
                 'version' => $livrable->version,
                 'classifier' => $livrable->classifier
             ));
-            if ($livrableMongo !== null) {
-                throw new WebApplicationException('Livrable déjà présent', 409);
+
+            if (isset($params['force']) && ($params['force'] == '1')) {
+                if ($livrableMongo !== null) {
+                    if (!$this->ctrl->supprimer('' . $livrableMongo->file['_id'])) {
+                        throw new WebApplicationException('Livrable déjà présent', 409);
+                    }
+                }
+            } else {
+                if ($livrableMongo !== null) {
+                    throw new WebApplicationException('Livrable déjà présent', 409);
+                }
             }
 
             $id = $this->ctrl->creerLivrable($livrable, $file->getTmpFile());
-            $livrable->id = $id;
-            
+            $livrable->id = '' . $id;
+
             return HttpResponse::ok()->status(201)->entity($livrable)->addHeader('Location', '/livrable/' . $id);
         } else {
-             throw new WebApplicationException('Requête invalide', 400);
+            throw new WebApplicationException('Requête invalide', 400);
         }
     }
 
@@ -137,7 +146,7 @@ class Livrable {
         $project = $this->request->getParam('projectName');
         $version = $this->request->getParam('version');
         $classifier = $this->request->getParam('classifier');
-        
+
         return HttpResponse::ok()->entity($this->ctrl->search($vendor, $project, $version, $classifier, $this->request->getParam('page') === null ? 1 : $this->request->getParam('page')));
     }
 
@@ -151,21 +160,20 @@ class Livrable {
      * @param string $version
      * @param string $classifier
      */
-    public function getByCriteria($vendorName, $projectName, $version, $classifier){
+    public function getByCriteria($vendorName, $projectName, $version, $classifier) {
         $info = $this->ctrl->getLivrableByCriteria($vendorName, $projectName, $version, empty($classifier) ? null : $classifier);
 
-        if($info === null){
+        if ($info === null) {
             return HttpResponse::status(404);
         }
-        
-        if(isset($info['redirect'])){
+
+        if (isset($info['redirect'])) {
             return HttpResponse::status(301)->addHeader('Location', $info['redirect']);
-        }else{
+        } else {
             return HttpResponse::ok()->expires(self::EXPIRES)->addHeader('Content-Disposition', 'attachment; filename="' . $info['filename'] . '"')->entity($info['stream']);
         }
-        
     }
-    
+
     /**
      * @Get
      * @Path(":mAlpha")
@@ -179,13 +187,13 @@ class Livrable {
     public function get($id) {
         $info = $this->ctrl->getLivrable($id);
 
-        if($info === null){
+        if ($info === null) {
             return HttpResponse::status(404);
         }
-        
-        if(isset($info['redirect'])){
+
+        if (isset($info['redirect'])) {
             return HttpResponse::status(301)->addHeader('Location', $info['redirect']);
-        }else{
+        } else {
             return HttpResponse::ok()->expires(self::EXPIRES)->addHeader('Content-Disposition', 'attachment; filename="' . $info['filename'] . '"')->entity($info['stream']);
         }
     }
