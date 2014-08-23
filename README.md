@@ -93,7 +93,7 @@ return array(
 ## Ajouter un livrable
  * Path : /livrable
  * Méthode : POST
- * Paramètres : attributs du livrable
+ * Paramètres : attributs du livrable + paramètre "force" avec la valeur "1" pour forcer l'upload
  * Accept : application/json
  * Description
     * Ajout d'un livrable sur l'instance
@@ -131,8 +131,8 @@ return array(
  * wget http://hugerepo.test.fr/livrable/53e998f75768bca60d9b4567
  
 ## Tests
- * VirtualHost sur le répertoire /src/test/webapp
+ * VirtualHost sur le répertoire /target/hugeRepo-dev/src/test/webapp
  * Variabiliser /src/test/resources/variables.ini
- * phpunit -c src/test/resources/phpunit.xml --testsuite IT
+ * phing -f build.xml clean test
 
 
