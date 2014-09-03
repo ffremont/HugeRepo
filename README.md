@@ -1,6 +1,6 @@
 HugeRepo
 ========
-<a target="_blank" href="https://hubic.com/home/pub/?ruid=aHR0cHM6Ly9sYjEwNDAucGNzLm92aC5uZXQvdjEvQVVUSF85ZmQ3YTIxNDk1OTEwOGI2NjNiNDY4OGJkOWQzNzdhMS9kZWZhdWx0Ly5vdmhQdWIvMTQwODgwMTA3MV8xNDA5NjY1MDcxP3RlbXBfdXJsX3NpZz0xNTM1MGI3M2E0N2VkYzE1ZjNiMDY0YmRhNTBjYzdjZTQ1NjdmYzhiJnRlbXBfdXJsX2V4cGlyZXM9MTQwOTY2NTA3MQ==">Télécharger v1.1.0</a>
+<a target="_blank" href="https://hubic.com/home/pub/?ruid=aHR0cHM6Ly9sYjEwNDAucGNzLm92aC5uZXQvdjEvQVVUSF85ZmQ3YTIxNDk1OTEwOGI2NjNiNDY4OGJkOWQzNzdhMS9kZWZhdWx0Ly5vdmhQdWIvMTQwOTc2NDA5OV8xNDEwNjI4MDk5P3RlbXBfdXJsX3NpZz05OWU3NThjYTg3NDFkZTFhYWRlMjY4ZmQ5YjkyMzFiZTFlMDM4ZGM2JnRlbXBfdXJsX2V4cGlyZXM9MTQxMDYyODA5OQ==">Télécharger v1.1.1</a>
 
 Application permettant de stocker des livrables via une API en REST. 
 Vous pouvez organiser votre stockage en fonction de votre organisation, par exemple :
