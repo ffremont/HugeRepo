@@ -10,7 +10,7 @@ $configs = require($resource.'/config.php');
 
 \Huge\IoC\Container\SuperIoC::registerLoader(array($loader, 'loadClass'));
 
-$ioc = new \Huge\Rest\WebAppIoC('huge-repo-'.$configs['instance.name'], '1.0');
+$ioc = new \Huge\Rest\WebAppIoC('huge-repo-'.$configs['instance.name'], $configs['version']);
 
 $cache = new \Doctrine\Common\Cache\ArrayCache();
 if($configs['memcache.enable']){

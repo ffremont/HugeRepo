@@ -134,6 +134,7 @@ class Livrable {
     /**
      * @Get
      * @Path("search")
+     * @Consumes({"application/json", "*\/*"})
      * @Produces({"application/json"})
      * 
      * @param string $vendor
@@ -153,6 +154,7 @@ class Livrable {
     /**
      * @Get
      * @Path(":mAlpha/:mAlpha/:mAlpha/?:oString")
+     * @Consumes({"application/octet-stream", "*\/*"})
      * @Produces({"application/octet-stream"})
      * 
      * @param string $vendorName
@@ -177,6 +179,7 @@ class Livrable {
     /**
      * @Get
      * @Path(":mAlpha")
+     * @Consumes({"application/octet-stream", "*\/*"})
      * @Produces({"application/octet-stream"})
      * 
      * @param string $vendor

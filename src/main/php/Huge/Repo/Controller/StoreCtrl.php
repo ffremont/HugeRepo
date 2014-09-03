@@ -162,6 +162,7 @@ class StoreCtrl {
      * @return array
      */
     public function getLivrable($id) {
+        $this->logger->debug($id);
         return $this->get(array(
             '_id' => new \MongoId($id)
         ), "/livrable/$id");

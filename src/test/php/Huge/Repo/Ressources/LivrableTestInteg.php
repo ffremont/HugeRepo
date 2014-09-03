@@ -38,7 +38,7 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         $status = null;
         $response = null;
         try {
-            $response = $client->get('/livrable/Florent/MonAppli/1.2.0/dev')->send();
+            $response = $client->get('/livrable/Florent/MonAppli/1.2.0/dev')->addHeader('Accept', '*/*')->send();
             $status = $response->getStatusCode();
         } catch (GuzzleHttp\Exception\BadResponseException $e) {
             $status = $e->getResponse()->getStatusCode();
@@ -58,7 +58,7 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         $status = null;
         $response = null;
         try {
-            $response = $client->get('/livrable/Florent/MonAppli/1.3.0')->send();
+            $response = $client->get('/livrable/Florent/MonAppli/1.3.0')->addHeader('Accept', '*/*')->send();
             $status = $response->getStatusCode();
         } catch (GuzzleHttp\Exception\BadResponseException $e) {
             $status = $e->getResponse()->getStatusCode();
@@ -78,7 +78,7 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         $status = null;
         $response = null;
         try {
-            $response = $client->get('/livrable/53e998b55768bc8f088b4567')->send();
+            $response = $client->get('/livrable/53e998b55768bc8f088b4567')->addHeader('Accept', '*/*')->send();
             $status = $response->getStatusCode();
         } catch (GuzzleHttp\Exception\BadResponseException $e) {
             $status = $e->getResponse()->getStatusCode();
@@ -98,7 +98,7 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         $status = null;
         $response = null;
         try {
-            $response = $client->get('/livrable/search')->send();
+            $response = $client->get('/livrable/search')->addHeader('Accept', 'application/json')->send();
             $status = $response->getStatusCode();
         } catch (GuzzleHttp\Exception\BadResponseException $e) {
             $status = $e->getResponse()->getStatusCode();
@@ -124,7 +124,7 @@ class LivrableTestInteg extends \PHPUnit_Framework_TestCase {
         $status = null;
         $response = null;
         try {
-            $response = $client->get('/livrable/search?version=1.2.1&classifier=prod')->send();
+            $response = $client->get('/livrable/search?version=1.2.1&classifier=prod')->addHeader('Accept', 'application/json')->send();
             $status = $response->getStatusCode();
         } catch (GuzzleHttp\Exception\BadResponseException $e) {
             $status = $e->getResponse()->getStatusCode();
