@@ -32,7 +32,7 @@ Installer avec composer
 ## Livrable
   * vendorName (obligatoire): Nom du vendor
   * projectName (obligatoire): Nom du projet
-  * version (obligatoire): X.Y.Z
+  * version (obligatoire): X.Y.Z (#^[0-9]\.[0-9]\.[0-9](\-[a-zA-Z0-9]+)?$#)
   * classifier (facultatif): déclinaison de votre livrable (dev, prod, ...)
   * sha1 (facultatif) : permet de réaliser une vérification côté serveur
 
@@ -101,12 +101,14 @@ return array(
 ## Télécharger un livrable
  * Path : /livrable/{ID} ou /livrable/{vendorName}/{projectName}/{version}/{classifier}
  * Méthode : GET
+ * Accept : application/octet-stream ou */*
  * Description
     * Télécharge un livrable depuis l'instance courante ou depuis une autre instance
 
 ## Rechercher
  * Path : /livrable/search
  * Méthode : GET
+ * Accept : application/json ou */*
  * Paramètres en GET : vendorName, projectName, version, classifier
  * Description
     * Recherche * livrables sur l'instance courante
