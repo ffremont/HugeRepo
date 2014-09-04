@@ -13,14 +13,12 @@ Vous pouvez organiser votre stockage en fonction de votre organisation, par exem
 
 
 ##Installation
-Installer avec composer
-``` json
-    {
-        "require": {
-           "huge/repo": "..."
-        }
-    }
-```
+* Télécharger la version d'UheRepo
+* Décompresser
+* Modifier la configuration src/main/resources/config.php pour pointer vers votre mongo
+* Créer un virtualhost qui pointe vers src/main/webapp
+* Plus d'informations dans la rubrique "Configuration"
+
 
 ## Fonctionnalités
  * Api REST 
