@@ -13,7 +13,7 @@ Vous pouvez organiser votre stockage en fonction de votre organisation, par exem
 
 
 ##Installation
-* Télécharger la version d'UheRepo
+* Télécharger la version d'HugeRepo
 * Décompresser
 * Modifier la configuration src/main/resources/config.php pour pointer vers votre mongo
 * Créer un virtualhost qui pointe vers src/main/webapp
