@@ -13,25 +13,9 @@ return array(
     // liste des claves
     'slaves' => array(),
     
-    'log4phpConfig' => array(
-        'rootLogger' => array(
-            'appenders' => array('default'),
-        ),
-        'appenders' => array(
-            'default' => array(
-                'class' => 'LoggerAppenderFile',
-                'layout' => array(
-                    'class' => 'LoggerLayoutPattern',
-                    'params' => array(
-                        'conversionPattern' => '%date{Y-m-d H:i} - %logger %-5level : %msg%n%ex'
-                    )
-                ),
-                'params' => array(
-                    'file' => '/var/log/apps/hugeRepo/hugeRepoTest.log',
-                    'append' => true
-                )
-            )
-        )
+    'klogger' => array(
+        'level' => 'debug',
+        'path' => '/var/log/apps/hugeRepo/'
     )
 );
 

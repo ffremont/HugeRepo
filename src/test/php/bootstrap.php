@@ -9,7 +9,8 @@ $GLOBALS['resourcesDir'] = __DIR__ . '/../resources';
 $GLOBALS['variables'] = parse_ini_file($GLOBALS['resourcesDir'] . '/variables.ini');
 $configs = require($GLOBALS['resourcesDir'].'/config.php');
 
-// LOGGER
-\Logger::configure($configs['log4phpConfig']);
+
+
+
 
 

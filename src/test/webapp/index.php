@@ -5,9 +5,6 @@ $loader = require(__DIR__ . '/../../../vendor/autoload.php');
 $resource = __DIR__.'/../resources';
 $configs = require($resource.'/config.php');
 
-// LOGGER log4php
-\Logger::configure($configs['log4phpConfig']);
-
 \Huge\IoC\Container\SuperIoC::registerLoader(array($loader, 'loadClass'));
 
 $ioc = new \Huge\Rest\WebAppIoC('huge-repo', '1.0');
