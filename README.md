@@ -54,26 +54,9 @@ return array(
     /* 'http://slave1.fr' */
     ),
     
-    'log4phpConfig' => array(
-        'rootLogger' => array(
-            'level' => 'WARN',
-            'appenders' => array('default'),
-        ),
-        'appenders' => array(
-            'default' => array(
-                'class' => 'LoggerAppenderFile',
-                'layout' => array(
-                    'class' => 'LoggerLayoutPattern',
-                    'params' => array(
-                        'conversionPattern' => '%date{Y-m-d H:i} - %logger %-5level : %msg%n%ex'
-                    )
-                ),
-                'params' => array(
-                    'file' => __DIR__.'/../../../log/repo.log',
-                    'append' => true
-                )
-            )
-        )
+    'klogger' => array(
+        'level' => 'warn',
+        'path' => __DIR__.'/../../../log/'
     )
 );
 ```
