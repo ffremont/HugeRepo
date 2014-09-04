@@ -30,7 +30,7 @@ Vous pouvez organiser votre stockage en fonction de votre organisation, par exem
 ## Livrable
   * vendorName (obligatoire): Nom du vendor
   * projectName (obligatoire): Nom du projet
-  * version (obligatoire): X.Y.Z (#^[0-9]\.[0-9]\.[0-9](\-[a-zA-Z0-9]+)?$#)
+  * version (obligatoire): X.Y.Z (1.0.0-SNAPSHOT par exemple)
   * classifier (facultatif): déclinaison de votre livrable (dev, prod, ...)
   * sha1 (facultatif) : permet de réaliser une vérification côté serveur
 
