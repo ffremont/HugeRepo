@@ -4,7 +4,7 @@ return array(
     'version' => '${version}',
     // nom de l'instance master, slave1, slave2 ...
     'instance.name' => 'master',
-    'mongo.server' => 'mongodb://localhost:27018',
+    'mongo.server' => 'mongodb://localhost:27017',
     'mongo.dbName' => 'hugeRepo',
     'debug' => false,
     'memcache.enable' => true,
@@ -16,7 +16,7 @@ return array(
     ),
     
     'klogger' => array(
-        'level' => 'warn',
+        'level' => 'warning',
         'path' => __DIR__.'/../../../log/'
     )
 );
